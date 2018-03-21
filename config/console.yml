@@ -1,0 +1,13 @@
+imports:
+  - {resource: console.php}
+services:
+  shell:
+    class: TJM\TBin\Service\Shell
+    calls:
+      - [addWhereAlias, [local, 'localhost']]
+      - [addWhereAlias, [tmcom, 'tobymackenzie.com']]
+tjm_console:
+  name: 'tbin'
+  version: '0.1'
+  commands:
+    'TJM\TBin\Command': '%paths.project%/src/Command'
