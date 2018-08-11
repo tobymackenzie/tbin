@@ -22,14 +22,6 @@ class Shell{
 		if(is_array($runCommands)){
 			$runCommands = $this->convertCommandsArrayToString($runCommands);
 		}
-
-		//--if remote and we have nothing to run, ssh in with passthrough
-		if(!$runCommands && $where !== 'localhost'){
-			$runCommands = '$SHELL --login';
-			if(!isset($capture)){
-				$capture = false;
-			}
-		}
 		if(isset($opts['cd']) && $opts['cd']){
 			$runCommands = "cd {$opts['cd']} && {$runCommands}";
 		}
