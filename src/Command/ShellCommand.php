@@ -9,9 +9,9 @@ use Symfony\Component\Console\Question\Question;
 use TJM\Component\Console\Command\ContainerAwareCommand as Base;
 
 class ShellCommand extends Base{
+	static public $defaultName = 'shell';
 	protected function configure(){
 		$this
-			->setName('shell')
 			->setDescription('Run `tbin` as a simple interactive shell, allowing easy running of multiple commands.')
 		;
 	}

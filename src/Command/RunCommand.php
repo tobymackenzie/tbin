@@ -7,9 +7,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 use TJM\Component\Console\Command\ContainerAwareCommand as Base;
 
 class RunCommand extends Base{
+	static public $defaultName = 'run';
 	protected function configure(){
 		$this
-			->setName('run')
 			->setDescription('Run command on remote server.')
 			->addArgument('where', InputArgument::REQUIRED, 'SSH style host string of host to run command on.')
 			->addArgument('run', InputArgument::REQUIRED, 'Command(s) to run.')

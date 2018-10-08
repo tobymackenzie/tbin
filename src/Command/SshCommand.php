@@ -7,9 +7,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 use TJM\Component\Console\Command\ContainerAwareCommand as Base;
 
 class SshCommand extends Base{
+	static public $defaultName = 'ssh';
 	protected function configure(){
 		$this
-			->setName('ssh')
 			->setDescription('SSH into a host.')
 			->addArgument('where', InputArgument::REQUIRED, 'Host string to SSH into.')
 			->addOption('cd', 'd', InputOption::VALUE_REQUIRED, 'Directory to change to.')
