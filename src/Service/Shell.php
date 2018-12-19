@@ -49,7 +49,7 @@ class Shell{
 			passthru($command, $exitCode);
 		}
 		if($exitCode){
-			throw new Exception("Error {$exitCode} running command `{$command}`");
+			throw new Exception("Error {$exitCode} running command `{$command}`", $exitCode);
 		}
 		return isset($result) && $result ? implode("\n", $result) : $exitCode;
 	}
