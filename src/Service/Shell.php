@@ -22,8 +22,8 @@ class Shell{
 		if(is_array($runCommands)){
 			$runCommands = $this->convertCommandsArrayToString($runCommands);
 		}
-		if(isset($opts['cd']) && $opts['cd']){
-			$runCommands = "cd {$opts['cd']} && {$runCommands}";
+		if(isset($opts['path']) && $opts['path']){
+			$runCommands = "cd {$opts['path']} && {$runCommands}";
 		}
 		$shellOptions = isset($opts['shellOpts']) ? $opts['shellOpts'] : [];
 		if($where === 'localhost'){
