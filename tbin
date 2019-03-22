@@ -1,6 +1,5 @@
 #!/usr/bin/env php
 <?php
-use Symfony\Component\Console\Input\ArgvInput;
 use TJM\Component\Console\Application;
 
 $loader = __DIR__ . '/vendor/autoload.php';
@@ -11,4 +10,4 @@ if(!file_exists($loader)){
 }
 $loader = require_once($loader);
 $app = new Application(__DIR__ . '/config/console.yml');
-$app->run(new ArgvInput());
+$app->run();
