@@ -13,14 +13,14 @@ class RunCommand extends Base{
 			->setDescription('Run command on remote server.')
 			->addArgument('where', InputArgument::REQUIRED, 'SSH style host string of host to run command on.')
 			->addArgument('run', InputArgument::REQUIRED, 'Command(s) to run.')
-			->addOption('cd', 'd', InputOption::VALUE_REQUIRED, 'Directory to change to.')
 			->addOption('forward-agent', 'f', InputOption::VALUE_NONE, 'Forward local credentials for connecting to other servers from remote.')
+			->addOption('path', 'p', InputOption::VALUE_REQUIRED, 'Directory to change to.')
 		;
 	}
 	protected function execute(InputInterface $input, OutputInterface $output){
 		$opts = [];
-		if($input->getOption('cd')){
-			$opts['cd'] = $input->getOption('cd');
+		if($input->getOption('path')){
+			$opts['path'] = $input->getOption('path');
 		}
 		if($input->getOption('forward-agent')){
 			$opts['forwardAgent'] = true;
