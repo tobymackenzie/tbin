@@ -23,7 +23,7 @@ class Shell{
 			$runCommands = $this->convertCommandsArrayToString($runCommands);
 		}
 		if(isset($opts['path']) && $opts['path']){
-			$runCommands = "cd {$opts['path']} && {$runCommands}";
+			$runCommands = "cd " . escapeshellarg($opts['path']) . " && {$runCommands}";
 		}
 		$shellOptions = isset($opts['shellOpts']) ? $opts['shellOpts'] : [];
 		if($where === 'localhost'){
@@ -41,7 +41,7 @@ class Shell{
 			$command = "ssh {$where}";
 		}
 		if($runCommands){
-			$command .= ' ' . implode(' ', $shellOptions) . ' "' . $this->escapeCommandDoubleQuotes($runCommands) . '"';
+			$command .= ' ' . implode(' ', $shellOptions) . ' ' . escapeshellarg($runCommands);
 		}
 		if($capture){
 			exec($command, $result, $exitCode);
@@ -52,9 +52,6 @@ class Shell{
 			throw new Exception("Error {$exitCode} running command `{$command}`", $exitCode);
 		}
 		return isset($result) && $result ? implode("\n", $result) : $exitCode;
-	}
-	protected function escapeCommandDoubleQuotes($command){
-		return str_replace('"', '\\"', $command);
 	}
 	protected function convertCommandsArrayToString($commands){
 		return implode(' && ', $commands);

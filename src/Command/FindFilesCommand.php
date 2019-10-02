@@ -37,18 +37,18 @@ class FindFilesCommand extends Base{
 		$excludePaths = $input->getOption('exclude-paths');
 		if($excludePaths){
 			foreach($excludePaths as $path){
-				$command .= " -not -path '{$path}'";
+				$command .= " -not -path " . escapeshellarg($path);
 			}
 		}
 		$name = $input->getArgument('name');
 		if($name){
-			$command .= " -name '{$name}'";
+			$command .= " -name " . escapeshellarg($name);
 		}
 		$run = $input->getOption('run');
 		$trailingCharacter = ($run ? ';' : '+');
 		if($input->getOption('contents')){
 			$grepOpts = ($run ? '-q' : '-l');
-			$command .= " -type f -exec grep {$grepOpts} '{$input->getOption('contents')}' {} \\{$trailingCharacter}";
+			$command .= " -type f -exec grep {$grepOpts} " . escapeshellarg($input->getOption('contents')) . " {} \\{$trailingCharacter}";
 		}
 		if($run){
 			$command .= " -exec {$run} {} \\{$trailingCharacter}";
