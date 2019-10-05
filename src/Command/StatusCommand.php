@@ -1,12 +1,19 @@
 <?php
 namespace TJM\TBin\Command;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use TJM\Component\Console\Command\ContainerAwareCommand as Base;
+use TJM\TBin\Service\Shell;
 
-class StatusCommand extends Base{
+class StatusCommand extends Command{
 	static public $defaultName = 'status';
+	protected $shell;
+	public function __construct(Shell $shell){
+		$this->shell = $shell;
+		parent::__construct();
+	}
 	protected function configure(){
 		$this
 			->setDescription('Get status of a machine or site.')
@@ -16,27 +23,25 @@ class StatusCommand extends Base{
 	protected function execute(InputInterface $input, OutputInterface $output){
 		//-!! logic should go into a service, but what service?
 		$where = $input->getArgument('where');
-		$shellService = $this->getContainer()->get('shell');
 		$isLocalhost = ($where === 'localhost');
 		$sshKnown = false;
 		if(!$isLocalhost){
 			$whereHost = $where;
-			if($shellService->hasWhereAlias($where)){
-				$whereHost = $shellService->getWhereAlias($where);
+			if($this->shell->hasWhereAlias($where)){
+				$whereHost = $this->shell->getWhereAlias($where);
 			}
 			try{
-				$sshKnown = (bool) $shellService->run('ssh-keygen -F ' . $whereHost, 'localhost', [
+				$sshKnown = (bool) $this->shell->run('ssh-keygen -F ' . $whereHost, 'localhost', [
 					'capture'=> true
 				]);
 			}catch(\Exception $e){}
 		}
 
 		if(!$isLocalhost){
-			$shellService->run('ping -c 1 ' . $whereHost);
+			$this->shell->run('ping -c 1 ' . $whereHost);
 		}
 		if($isLocalhost || $sshKnown){
-			$shellService->run('w -i', $where);
-
+			$this->shell->run('w -i', $where);
 		}
 	}
 }

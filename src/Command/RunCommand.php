@@ -1,13 +1,19 @@
 <?php
 namespace TJM\TBin\Command;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use TJM\Component\Console\Command\ContainerAwareCommand as Base;
+use TJM\TBin\Service\Shell;
 
-class RunCommand extends Base{
+class RunCommand extends Command{
 	static public $defaultName = 'run';
+	protected $shell;
+	public function __construct(Shell $shell){
+		$this->shell = $shell;
+		parent::__construct();
+	}
 	protected function configure(){
 		$this
 			->setDescription('Run command on remote server.')
@@ -25,6 +31,6 @@ class RunCommand extends Base{
 		if($input->getOption('forward-agent')){
 			$opts['forwardAgent'] = true;
 		}
-		$this->getContainer()->get('shell')->run($input->getArgument('run') ,$input->getArgument('where'), $opts);
+		$this->shell->run($input->getArgument('run'), $input->getArgument('where'), $opts);
 	}
 }

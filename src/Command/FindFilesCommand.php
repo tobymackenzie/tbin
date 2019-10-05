@@ -1,13 +1,19 @@
 <?php
 namespace TJM\TBin\Command;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use TJM\Component\Console\Command\ContainerAwareCommand as Base;
+use TJM\TBin\Service\Shell;
 
-class FindFilesCommand extends Base{
+class FindFilesCommand extends Command{
 	static public $defaultName = 'find-files';
+	protected $shell;
+	public function __construct(Shell $shell){
+		$this->shell = $shell;
+		parent::__construct();
+	}
 	protected function configure(){
 		$this
 			->setDescription('Find files via the `find` command.  Optionally use `grep` command to find content.  Optionally do stuff with those files using run option.')
@@ -54,6 +60,6 @@ class FindFilesCommand extends Base{
 			$command .= " -exec {$run} {} \\{$trailingCharacter}";
 		}
 		$output->writeln('Running: ' . $command);
-		$this->getContainer()->get('shell')->run($command ,$input->getArgument('where'), $opts);
+		$this->shell->run($command ,$input->getArgument('where'), $opts);
 	}
 }

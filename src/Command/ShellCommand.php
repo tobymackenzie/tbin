@@ -1,14 +1,14 @@
 <?php
 namespace TJM\TBin\Command;
 use Exception;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
-use TJM\Component\Console\Command\ContainerAwareCommand as Base;
 
-class ShellCommand extends Base{
+class ShellCommand extends Command{
 	static public $defaultName = 'shell';
 	protected function configure(){
 		$this

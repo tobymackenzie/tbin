@@ -1,13 +1,19 @@
 <?php
 namespace TJM\TBin\Command;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use TJM\Component\Console\Command\ContainerAwareCommand as Base;
+use TJM\TBin\Service\Shell;
 
-class SshCommand extends Base{
+class SshCommand extends Command{
 	static public $defaultName = 'ssh';
+	protected $shell;
+	public function __construct(Shell $shell){
+		$this->shell = $shell;
+		parent::__construct();
+	}
 	protected function configure(){
 		$this
 			->setDescription('SSH into a host.')
@@ -24,6 +30,6 @@ class SshCommand extends Base{
 		if($input->getOption('path')){
 			$opts['path'] = $input->getOption('path');
 		}
-		$this->getContainer()->get('shell')->run(null ,$input->getArgument('where'), $opts);
+		$this->shell->run(null ,$input->getArgument('where'), $opts);
 	}
 }
