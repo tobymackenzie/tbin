@@ -1,6 +1,9 @@
 imports:
   - {resource: console.php}
 services:
+  _defaults:
+    bind:
+      $projectPath: '%paths.project%'
   TJM\TBin\Service\Shell:
     calls:
       - [addWhereAlias, [local, 'localhost']]
