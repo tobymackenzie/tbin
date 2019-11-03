@@ -6,8 +6,8 @@ services:
       $projectPath: '%paths.project%'
   TJM\TBin\Service\Shell:
     calls:
-      - [addWhereAlias, [local, 'localhost']]
-      - [addWhereAlias, [tmcom, 'tobymackenzie.com']]
+      - [addHost, [local, 'localhost']]
+      - [addHost, [tmcom, 'tobymackenzie.com']]
   TJM\TBin\Command\:
     autowire: true
     resource: '%paths.project%/src/Command'

@@ -17,31 +17,31 @@ class StatusCommand extends Command{
 	protected function configure(){
 		$this
 			->setDescription('Get status of a machine or site.')
-			->addArgument('where', InputArgument::OPTIONAL, 'SSH style host string of host to run command on.', 'localhost')
+			->addArgument('host', InputArgument::OPTIONAL, 'SSH style host string of host to run command on.', 'localhost')
 		;
 	}
 	protected function execute(InputInterface $input, OutputInterface $output){
 		//-!! logic should go into a service, but what service?
-		$where = $input->getArgument('where');
-		$isLocalhost = ($where === 'localhost');
+		$host = $input->getArgument('host');
+		$translatedHost = $host;
+		if($this->shell->hasHost($host)){
+			$translatedHost = $this->shell->getHost($host);
+		}
+		$isLocalhost = ($host === 'localhost');
 		$sshKnown = false;
 		if(!$isLocalhost){
-			$whereHost = $where;
-			if($this->shell->hasWhereAlias($where)){
-				$whereHost = $this->shell->getWhereAlias($where);
-			}
 			try{
-				$sshKnown = (bool) $this->shell->run('ssh-keygen -F ' . $whereHost, 'localhost', [
+				$sshKnown = (bool) $this->shell->run('ssh-keygen -F ' . $translatedHost, 'localhost', [
 					'capture'=> true
 				]);
 			}catch(\Exception $e){}
 		}
 
 		if(!$isLocalhost){
-			$this->shell->run('ping -c 1 ' . $whereHost);
+			$this->shell->run('ping -c 1 ' . $translatedHost);
 		}
 		if($isLocalhost || $sshKnown){
-			$this->shell->run('w -i', $where);
+			$this->shell->run('w -i', $host);
 		}
 	}
 }

@@ -17,7 +17,7 @@ class FindFilesCommand extends Command{
 	protected function configure(){
 		$this
 			->setDescription('Find files via the `find` command.  Optionally use `grep` command to find content.  Optionally do stuff with those files using run option.')
-			->addArgument('where', InputArgument::REQUIRED, 'SSH style host string of host to run command on.')
+			->addArgument('host', InputArgument::REQUIRED, 'SSH style host string of host to run command on.')
 			->addArgument('name', InputArgument::OPTIONAL, 'Look for files with name.')
 			->addOption('contents', 'c', InputOption::VALUE_REQUIRED, 'Search file contents for string.')
 			->addOption('exclude-paths', 'e', InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'Path(s) to exclude from search.')
@@ -60,6 +60,6 @@ class FindFilesCommand extends Command{
 			$command .= " -exec {$run} {} \\{$trailingCharacter}";
 		}
 		$output->writeln('Running: ' . $command);
-		$this->shell->run($command ,$input->getArgument('where'), $opts);
+		$this->shell->run($command ,$input->getArgument('host'), $opts);
 	}
 }

@@ -17,7 +17,7 @@ class RunCommand extends Command{
 	protected function configure(){
 		$this
 			->setDescription('Run command on remote server.')
-			->addArgument('where', InputArgument::REQUIRED, 'SSH style host string of host to run command on.')
+			->addArgument('host', InputArgument::REQUIRED, 'SSH style host string of host to run command on.')
 			->addArgument('run', InputArgument::REQUIRED, 'Command(s) to run.')
 			->addOption('forward-agent', 'f', InputOption::VALUE_NONE, 'Forward local credentials for connecting to other servers from remote.')
 			->addOption('path', 'p', InputOption::VALUE_REQUIRED, 'Directory to change to.')
@@ -31,6 +31,6 @@ class RunCommand extends Command{
 		if($input->getOption('forward-agent')){
 			$opts['forwardAgent'] = true;
 		}
-		$this->shell->run($input->getArgument('run'), $input->getArgument('where'), $opts);
+		$this->shell->run($input->getArgument('run'), $input->getArgument('host'), $opts);
 	}
 }

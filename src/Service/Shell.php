@@ -3,20 +3,20 @@ namespace TJM\TBin\Service;
 use Exception;
 
 class Shell{
-	protected $whereAliases = [];
-	public function addWhereAlias($alias, $value){
-		$this->whereAliases[$alias] = $value;
+	protected $hosts = [];
+	public function addHost($alias, $value){
+		$this->hosts[$alias] = $value;
 		return $this;
 	}
-	public function getWhereAlias($alias){
-		return $this->whereAliases[$alias];
+	public function getHost($alias){
+		return $this->hosts[$alias];
 	}
-	public function hasWhereAlias($alias){
-		return isset($this->whereAliases[$alias]);
+	public function hasHost($alias){
+		return isset($this->hosts[$alias]);
 	}
-	public function run($runCommands = null, $where = 'localhost', $opts = Array()){
-		if($this->hasWhereAlias($where)){
-			$where = $this->getWhereAlias($where);
+	public function run($runCommands = null, $host = 'localhost', $opts = Array()){
+		if($this->hasHost($host)){
+			$host = $this->getHost($host);
 		}
 		$capture = isset($opts['capture']) ? $opts['capture'] : null;
 		if(is_array($runCommands)){
@@ -26,7 +26,7 @@ class Shell{
 			$runCommands = "cd " . escapeshellarg($opts['path']) . " && {$runCommands}";
 		}
 		$shellOptions = isset($opts['shellOpts']) ? $opts['shellOpts'] : [];
-		if($where === 'localhost'){
+		if($host === 'localhost'){
 			if($runCommands && !in_array('-c', $shellOptions)){
 				$shellOptions[] = '-c';
 			}
@@ -38,7 +38,7 @@ class Shell{
 			if(isset($opts['forwardAgent']) && $opts['forwardAgent'] && !in_array('-o ForwardAgent="yes"', $shellOptions)){
 				$shellOptions[] = '-o ForwardAgent="yes"';
 			}
-			$command = "ssh {$where}";
+			$command = "ssh {$host}";
 		}
 		if($runCommands){
 			$command .= ' ' . implode(' ', $shellOptions) . ' ' . escapeshellarg($runCommands);

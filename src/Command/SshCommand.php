@@ -17,7 +17,7 @@ class SshCommand extends Command{
 	protected function configure(){
 		$this
 			->setDescription('SSH into a host.')
-			->addArgument('where', InputArgument::REQUIRED, 'Host string to SSH into.')
+			->addArgument('host', InputArgument::REQUIRED, 'Host string to SSH into.')
 			->addOption('path', 'p', InputOption::VALUE_REQUIRED, 'Directory to change to.')
 			->addOption('forward-agent', 'f', InputOption::VALUE_NONE, 'Forward local credentials for connecting to other servers from remote.')
 		;
@@ -30,6 +30,6 @@ class SshCommand extends Command{
 		if($input->getOption('path')){
 			$opts['path'] = $input->getOption('path');
 		}
-		$this->shell->run(null ,$input->getArgument('where'), $opts);
+		$this->shell->run(null ,$input->getArgument('host'), $opts);
 	}
 }
