@@ -18,7 +18,8 @@ class Shell{
 		if($this->hasHost($host)){
 			$host = $this->getHost($host);
 		}
-		$capture = isset($opts['capture']) ? $opts['capture'] : null;
+		//--interactive means we can interact with the shell process, but can't capture it.  defaults to true, but must be false if we want the output captured.
+		$interactive = isset($opts['interactive']) ? $opts['interactive'] : true;
 		if(is_array($runCommands)){
 			$runCommands = $this->convertCommandsArrayToString($runCommands);
 		}
@@ -43,10 +44,10 @@ class Shell{
 		if($runCommands){
 			$command .= ' ' . implode(' ', $shellOptions) . ' ' . escapeshellarg($runCommands);
 		}
-		if($capture){
-			exec($command, $result, $exitCode);
-		}else{
+		if($interactive){
 			passthru($command, $exitCode);
+		}else{
+			exec($command, $result, $exitCode);
 		}
 		if($exitCode){
 			throw new Exception("Error {$exitCode} running command `{$command}`", $exitCode);

@@ -32,7 +32,7 @@ class StatusCommand extends Command{
 		if(!$isLocalhost){
 			try{
 				$sshKnown = (bool) $this->shell->run('ssh-keygen -F ' . $translatedHost, 'localhost', [
-					'capture'=> true
+					'interactive'=> false
 				]);
 			}catch(\Exception $e){}
 		}
