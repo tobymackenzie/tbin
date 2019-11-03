@@ -33,7 +33,7 @@ class Shell{
 			}
 			$command = '$SHELL';
 		}else{
-			if($runCommands && !in_array('-t', $shellOptions)){
+			if($runCommands && $interactive && !in_array('-t', $shellOptions)){
 				$shellOptions[] = '-t';
 			}
 			if(isset($opts['forwardAgent']) && $opts['forwardAgent'] && !in_array('-o ForwardAgent="yes"', $shellOptions)){
