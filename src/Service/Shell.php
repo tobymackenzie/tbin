@@ -24,7 +24,7 @@ class Shell{
 			$runCommands = $this->convertCommandsArrayToString($runCommands);
 		}
 		if(isset($opts['path']) && $opts['path']){
-			$runCommands = "cd " . escapeshellarg($opts['path']) . ($runCommands ? " && {$runCommands}" : ' && $SHELL --profile');
+			$runCommands = "cd " . escapeshellarg($opts['path']) . ($runCommands ? " && {$runCommands}" : ' && $SHELL --login');
 		}
 		$shellOptions = isset($opts['shellOpts']) ? $opts['shellOpts'] : [];
 		if($host === 'localhost'){
