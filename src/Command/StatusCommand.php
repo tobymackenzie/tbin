@@ -31,15 +31,12 @@ class StatusCommand extends Command{
 		$sshKnown = false;
 		if(!$isLocalhost){
 			try{
-				$sshKnown = (bool) $this->shell->run([
-					'command'=> 'ssh-keygen -F ' . $translatedHost
-					,'host'=> 'localhost'
-				]);
+				$sshKnown = (bool) $this->shell->run('ssh-keygen -F ' . $translatedHost);
 			}catch(\Exception $e){}
 		}
 
 		if(!$isLocalhost){
-			$output->writeln($this->shell->run(['command'=> 'ping -c 1 ' . $translatedHost]));
+			$output->writeln($this->shell->run('ping -c 1 ' . $translatedHost));
 		}
 		if($isLocalhost || $sshKnown){
 			$output->writeln($this->shell->run([
