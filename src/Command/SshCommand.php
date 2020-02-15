@@ -5,12 +5,12 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use TJM\TBin\Service\Shell;
+use TJM\ShellRunner\ShellRunner;
 
 class SshCommand extends Command{
 	static public $defaultName = 'ssh';
 	protected $shell;
-	public function __construct(Shell $shell){
+	public function __construct(ShellRunner $shell){
 		$this->shell = $shell;
 		parent::__construct();
 	}
@@ -23,13 +23,16 @@ class SshCommand extends Command{
 		;
 	}
 	protected function execute(InputInterface $input, OutputInterface $output){
-		$opts = [];
+		$opts = [
+			'host'=> $input->getArgument('host')
+			,'interactive'=> true
+		];
 		if($input->getOption('forward-agent')){
 			$opts['forwardAgent'] = true;
 		}
 		if($input->getOption('path')){
 			$opts['path'] = $input->getOption('path');
 		}
-		$this->shell->run(null ,$input->getArgument('host'), $opts);
+		$this->shell->run($opts);
 	}
 }

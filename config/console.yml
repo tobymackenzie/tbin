@@ -4,7 +4,7 @@ services:
   _defaults:
     bind:
       $projectPath: '%paths.project%'
-  TJM\TBin\Service\Shell:
+  TJM\ShellRunner\ShellRunner:
     calls:
       - [addHost, [local, 'localhost']]
       - [addHost, [tmcom, 'tobymackenzie.com']]

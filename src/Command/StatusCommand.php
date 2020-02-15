@@ -5,12 +5,12 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use TJM\Component\Console\Command\ContainerAwareCommand as Base;
-use TJM\TBin\Service\Shell;
+use TJM\ShellRunner\ShellRunner;
 
 class StatusCommand extends Command{
 	static public $defaultName = 'status';
 	protected $shell;
-	public function __construct(Shell $shell){
+	public function __construct(ShellRunner $shell){
 		$this->shell = $shell;
 		parent::__construct();
 	}
@@ -31,17 +31,21 @@ class StatusCommand extends Command{
 		$sshKnown = false;
 		if(!$isLocalhost){
 			try{
-				$sshKnown = (bool) $this->shell->run('ssh-keygen -F ' . $translatedHost, 'localhost', [
-					'interactive'=> false
+				$sshKnown = (bool) $this->shell->run([
+					'command'=> 'ssh-keygen -F ' . $translatedHost
+					,'host'=> 'localhost'
 				]);
 			}catch(\Exception $e){}
 		}
 
 		if(!$isLocalhost){
-			$this->shell->run('ping -c 1 ' . $translatedHost);
+			$output->writeln($this->shell->run(['command'=> 'ping -c 1 ' . $translatedHost]));
 		}
 		if($isLocalhost || $sshKnown){
-			$this->shell->run('w -i', $host);
+			$output->writeln($this->shell->run([
+				'command'=> 'w -i'
+				,'host'=> $host
+			]));
 		}
 	}
 }

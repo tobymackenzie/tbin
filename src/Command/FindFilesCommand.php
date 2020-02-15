@@ -5,12 +5,12 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use TJM\TBin\Service\Shell;
+use TJM\ShellRunner\ShellRunner;
 
 class FindFilesCommand extends Command{
 	static public $defaultName = 'find-files';
 	protected $shell;
-	public function __construct(Shell $shell){
+	public function __construct(ShellRunner $shell){
 		$this->shell = $shell;
 		parent::__construct();
 	}
@@ -36,30 +36,35 @@ class FindFilesCommand extends Command{
 		if($input->getOption('path')){
 			$opts['path'] = $input->getOption('path');
 		}
-		$command = "find .";
+		$opts['command'] = "find .";
 		if($input->getOption('find-options')){
-			$command .= " {$input->getOption('find-options')}";
+			$opts['command'] .= " {$input->getOption('find-options')}";
 		}
 		$excludePaths = $input->getOption('exclude-paths');
 		if($excludePaths){
 			foreach($excludePaths as $path){
-				$command .= " -not -path " . escapeshellarg($path);
+				$opts['command'] .= " -not -path " . escapeshellarg($path);
 			}
 		}
 		$name = $input->getArgument('name');
 		if($name){
-			$command .= " -name " . escapeshellarg($name);
+			$opts['command'] .= " -name " . escapeshellarg($name);
 		}
 		$run = $input->getOption('run');
 		$trailingCharacter = ($run ? ';' : '+');
 		if($input->getOption('contents')){
 			$grepOpts = ($run ? '-q' : '-l');
-			$command .= " -type f -exec grep {$grepOpts} " . escapeshellarg($input->getOption('contents')) . " {} \\{$trailingCharacter}";
+			$opts['command'] .= " -type f -exec grep {$grepOpts} " . escapeshellarg($input->getOption('contents')) . " {} \\{$trailingCharacter}";
 		}
+		$opts['host'] = $input->getArgument('host');
 		if($run){
-			$command .= " -exec {$run} {} \\{$trailingCharacter}";
+			$opts['command'] .= " -exec {$run} {} \\{$trailingCharacter}";
+			$opts['interactive'] = true;
+			$output->writeln('Running: ' . $opts['command']);
+			$this->shell->run($opts);
+		}else{
+			$output->writeln('Running: ' . $opts['command']);
+			$output->writeln($this->shell->run($opts));
 		}
-		$output->writeln('Running: ' . $command);
-		$this->shell->run($command ,$input->getArgument('host'), $opts);
 	}
 }
