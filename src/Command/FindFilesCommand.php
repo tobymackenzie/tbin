@@ -64,11 +64,11 @@ class FindFilesCommand extends Command{
 		if($run){
 			$opts['command'] .= " | xargs {$run}";
 			$opts['interactive'] = true;
-			$output->writeln('Running: ' . $opts['command']);
-			$this->shell->run($opts);
-		}else{
-			$output->writeln('Running: ' . $opts['command']);
-			$output->writeln($this->shell->run($opts));
+		}
+		$output->writeln('Running: ' . $opts['command']);
+		$result = $this->shell->run($opts);
+		if(!$run){
+			$output->writeln($result);
 		}
 	}
 }
