@@ -19,7 +19,7 @@ class FindFilesCommand extends Command{
 			->setDescription('Find files via the `find` command.  Optionally use `grep` command to find content.  Optionally do stuff with those files using run option.')
 			->addArgument('host', InputArgument::REQUIRED, 'SSH style host string of host to run command on.')
 			->addArgument('name', InputArgument::OPTIONAL, 'Look for files with name.')
-			->addOption('contents', 'c', InputOption::VALUE_REQUIRED, 'Search file contents for string.')
+			->addOption('contents', 'c', InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'Search file contents for string.  Multiple for separate strings (AND).')
 			->addOption('exclude-paths', 'e', InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'Path(s) to exclude from search.')
 			->addOption('find-options', 'o', InputOption::VALUE_REQUIRED, 'Options for the find command.')
 			->addOption('forward-agent', 'f', InputOption::VALUE_NONE, 'Forward local credentials for connecting to other servers from remote.')
@@ -52,13 +52,17 @@ class FindFilesCommand extends Command{
 		}
 		$run = $input->getOption('run');
 		$trailingCharacter = ($run ? ';' : '+');
-		if($input->getOption('contents')){
-			$grepOpts = ($run ? '-q' : '-l');
-			$opts['command'] .= " -type f -exec grep {$grepOpts} " . escapeshellarg($input->getOption('contents')) . " {} \\{$trailingCharacter}";
+		$contents = $input->getOption('contents');
+		if($contents){
+			$grepOpts = '-l';
+			$opts['command'] .= " -type f -exec grep {$grepOpts} " . escapeshellarg(array_shift($contents)) . " {} \\{$trailingCharacter}";
+			foreach($contents as $content){
+				$opts['command'] .= " | xargs grep {$grepOpts} " . escapeshellarg($content);
+			}
 		}
 		$opts['host'] = $input->getArgument('host');
 		if($run){
-			$opts['command'] .= " -exec {$run} {} \\{$trailingCharacter}";
+			$opts['command'] .= " | xargs {$run}";
 			$opts['interactive'] = true;
 			$output->writeln('Running: ' . $opts['command']);
 			$this->shell->run($opts);
