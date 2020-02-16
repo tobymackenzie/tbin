@@ -65,7 +65,9 @@ class FindFilesCommand extends Command{
 			$opts['command'] .= " | xargs {$run}";
 			$opts['interactive'] = true;
 		}
-		$output->writeln('Running: ' . $opts['command']);
+		if($output->isVerbose()){
+			$output->writeln('Running: ' . $opts['command']);
+		}
 		$result = $this->shell->run($opts);
 		if(!$run){
 			$output->writeln($result);
