@@ -61,11 +61,14 @@ class FindFilesCommand extends Command{
 		if($contents){
 			$maxI = count($contents) - 1;
 			foreach($contents as $i=> $content){
-				$opts['command'] .= " | xargs -0 grep -l";
-				if($i < $maxI || $run){
-					$opts['command'] .= ' --null';
-				}
-				$opts['command'] .= ' ' . escapeshellarg($content);
+				$opts['command'] .= " | xargs -0 grep -l --null " . escapeshellarg($content);
+			}
+		}
+		$opts['command'] .= ' | sort';
+		if($contents || $run){
+			$opts['command'] .= ' -z';
+			if(!$run){
+				$opts['command'] .= ' | tr ' . escapeshellarg('\0') . ' ' . escapeshellarg('\n');
 			}
 		}
 		$opts['host'] = $input->getArgument('host');

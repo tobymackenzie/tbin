@@ -53,7 +53,7 @@ class LogsCommand extends Command{
 			}
 		}
 		$opts['host'] = $input->getOption('host');
-		$opts['command'] .= " | xargs -0 {$run} " . implode(' ', $runOpts);
+		$opts['command'] .= " | sort -z | xargs -0 {$run} " . implode(' ', $runOpts);
 		$opts['interactive'] = true;
 		if($output->isVerbose()){
 			$output->writeln('Running: ' . $opts['command']);
