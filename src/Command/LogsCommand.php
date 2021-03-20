@@ -33,11 +33,10 @@ class LogsCommand extends Command{
 		$pathBits = explode('/', $input->getArgument('name'));
 		$name = array_pop($pathBits);
 		$opts['path'] .= '/' . implode('/', $pathBits);
-		$opts['command'] .= " -name " . escapeshellarg($name);
+		$opts['command'] .= " -name " . escapeshellarg($name) . ' -print0';
 		$runOpts = explode(' ', trim($input->getOption('run')));
 		$run = array_shift($runOpts);
 		$contents = $input->getOption('contents');
-		$trailingCharacter = ($run === 'less' ? '+' : ';');
 
 		if($contents){
 			switch($run){
@@ -49,14 +48,12 @@ class LogsCommand extends Command{
 					$runOpts[] = "-c " . escapeshellarg('set hlsearch') . ' +/' . escapeshellarg(implode('|', $contents));
 				break;
 			}
-			$grepOpts = '-l';
-			$opts['command'] .= " -type f -exec grep {$grepOpts} " . escapeshellarg(array_shift($contents)) . " {} \\{$trailingCharacter}";
 			foreach($contents as $content){
-				$opts['command'] .= " | xargs grep {$grepOpts} " . escapeshellarg($content);
+				$opts['command'] .= " | xargs -0 grep -l --null " . escapeshellarg($content);
 			}
 		}
 		$opts['host'] = $input->getOption('host');
-		$opts['command'] .= " | xargs {$run} " . implode(' ', $runOpts);
+		$opts['command'] .= " | xargs -0 {$run} " . implode(' ', $runOpts);
 		$opts['interactive'] = true;
 		if($output->isVerbose()){
 			$output->writeln('Running: ' . $opts['command']);

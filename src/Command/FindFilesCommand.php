@@ -51,18 +51,26 @@ class FindFilesCommand extends Command{
 			$opts['command'] .= " -name " . escapeshellarg($name);
 		}
 		$run = $input->getOption('run');
-		$trailingCharacter = ($run ? ';' : '+');
 		$contents = $input->getOption('contents');
 		if($contents){
-			$grepOpts = '-l';
-			$opts['command'] .= " -type f -exec grep {$grepOpts} " . escapeshellarg(array_shift($contents)) . " {} \\{$trailingCharacter}";
-			foreach($contents as $content){
-				$opts['command'] .= " | xargs grep {$grepOpts} " . escapeshellarg($content);
+			$opts['command'] .= ' -type f';
+		}
+		if($contents || $run){
+			$opts['command'] .= ' -print0';
+		}
+		if($contents){
+			$maxI = count($contents) - 1;
+			foreach($contents as $i=> $content){
+				$opts['command'] .= " | xargs -0 grep -l";
+				if($i < $maxI || $run){
+					$opts['command'] .= ' --null';
+				}
+				$opts['command'] .= ' ' . escapeshellarg($content);
 			}
 		}
 		$opts['host'] = $input->getArgument('host');
 		if($run){
-			$opts['command'] .= " | xargs {$run}";
+			$opts['command'] .= " | xargs -0 {$run}";
 			$opts['interactive'] = true;
 		}
 		if($output->isVerbose()){
