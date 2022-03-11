@@ -5,6 +5,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use TJM\ShellRunner\Location\Location;
 use TJM\ShellRunner\ShellRunner;
 
 class FindFilesCommand extends Command{
@@ -17,11 +18,11 @@ class FindFilesCommand extends Command{
 	protected function configure(){
 		$this
 			->setDescription('Find files via the `find` command.  Optionally use `grep` command to find content.  Optionally do stuff with those files using run option.')
-			->addArgument('host', InputArgument::REQUIRED, 'SSH style host string of host to run command on.')
 			->addArgument('name', InputArgument::OPTIONAL, 'Look for files with name.')
 			->addOption('contents', 'c', InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'Search file contents for string.  Multiple for separate strings (AND).')
 			->addOption('exclude-paths', 'e', InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'Path(s) to exclude from search.')
 			->addOption('find-options', 'o', InputOption::VALUE_REQUIRED, 'Options for the find command.')
+			->addOption('host', 'h', InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'SSH style host string of host(s) to run command on.', ['localhost'])
 			->addOption('forward-agent', 'f', InputOption::VALUE_NONE, 'Forward local credentials for connecting to other servers from remote.')
 			->addOption('path', 'p', InputOption::VALUE_REQUIRED, 'Directory to search at.')
 			->addOption('run', 'r', InputOption::VALUE_REQUIRED, 'Command to run on found files.')
@@ -30,12 +31,6 @@ class FindFilesCommand extends Command{
 	protected function execute(InputInterface $input, OutputInterface $output){
 		//-!! logic should go into a service, but what service?  Shell? Files?
 		$opts = [];
-		if($input->getOption('forward-agent')){
-			$opts['forwardAgent'] = true;
-		}
-		if($input->getOption('path')){
-			$opts['path'] = $input->getOption('path');
-		}
 		$opts['command'] = "find .";
 		if($input->getOption('find-options')){
 			$opts['command'] .= " {$input->getOption('find-options')}";
@@ -71,17 +66,27 @@ class FindFilesCommand extends Command{
 				$opts['command'] .= ' | tr ' . escapeshellarg('\0') . ' ' . escapeshellarg('\n');
 			}
 		}
-		$opts['host'] = $input->getArgument('host');
 		if($run){
 			$opts['command'] .= " | xargs -0 {$run}";
 			$opts['interactive'] = true;
 		}
-		if($output->isVerbose()){
-			$output->writeln('Running: ' . $opts['command']);
+		if($input->getOption('forward-agent')){
+			$opts['forwardAgent'] = true;
 		}
-		$result = $this->shell->run($opts);
-		if(!$run){
-			$output->writeln($result);
+		foreach($input->getOption('host') as $host){
+			if($output->isVerbose()){
+				$output->writeln('Running: ' . $opts['command'] . ' for host ' . $host);
+			}
+			$location = new Location([
+				'host'=> $host,
+				'path'=> $input->getOption('path'),
+				'protocol'=> $host === 'localhost' ? 'file' : 'ssh',
+			]);
+			$result = $this->shell->run($opts, $location);
+			if(!$run){
+				$output->writeln($result);
+			}
+
 		}
 	}
 }

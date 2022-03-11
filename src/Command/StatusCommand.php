@@ -17,32 +17,27 @@ class StatusCommand extends Command{
 	protected function configure(){
 		$this
 			->setDescription('Get status of a machine or site.')
-			->addArgument('host', InputArgument::OPTIONAL, 'SSH style host string of host to run command on.', 'localhost')
+			->addArgument('host', InputArgument::IS_ARRAY | InputArgument::OPTIONAL, 'SSH style host string of host(s) to run command on.', ['localhost'])
 		;
 	}
 	protected function execute(InputInterface $input, OutputInterface $output){
 		//-!! logic should go into a service, but what service?
-		$host = $input->getArgument('host');
-		$translatedHost = $host;
-		if($this->shell->hasHost($host)){
-			$translatedHost = $this->shell->getHost($host);
-		}
-		$isLocalhost = ($host === 'localhost');
-		$sshKnown = false;
-		if(!$isLocalhost){
-			try{
-				$sshKnown = (bool) $this->shell->run('ssh-keygen -F ' . $translatedHost);
-			}catch(\Exception $e){}
-		}
-
-		if(!$isLocalhost){
-			$output->writeln($this->shell->run('ping -c 1 ' . $translatedHost));
-		}
-		if($isLocalhost || $sshKnown){
-			$output->writeln($this->shell->run([
-				'command'=> 'w -i'
-				,'host'=> $host
-			]));
+		foreach($input->getArgument('host') as $host){
+			$translatedHost = $host;
+			if($this->shell->hasHost($host)){
+				$translatedHost = $this->shell->getHost($host);
+			}
+			$isLocalhost = ($host === 'localhost');
+			$sshKnown = false;
+			if(!$isLocalhost){
+				try{
+					$sshKnown = (bool) $this->shell->run('ssh-keygen -F ' . $translatedHost);
+				}catch(\Exception $e){}
+				$output->writeln($this->shell->run('ping -c 1 ' . $translatedHost));
+			}
+			if($isLocalhost || $sshKnown){
+				$output->writeln($this->shell->run('w -i', $host));
+			}
 		}
 	}
 }
