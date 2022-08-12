@@ -38,7 +38,7 @@ class ShellCommand extends Command{
 		while(true){
 			$question->setAutocompleterValues($autocompleteList);
 			$command = $questionHelper->ask($input, $output, $question);
-			if($command === 'exit'){
+			if($command === 'exit' || $command === 'x'){
 				break;
 			}elseif($command){
 				//---add last command to autocomplete list
