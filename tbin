@@ -1,13 +1,11 @@
 #!/usr/bin/env php
 <?php
 use TJM\Component\Console\Application;
-
-$loader = __DIR__ . '/vendor/autoload.php';
-if(!file_exists($loader)){
+define('TJM_TBIN_DIR', __DIR__);
+define('TJM_AUTOLOAD', TJM_TBIN_DIR . '/vendor/autoload.php');
+if(!file_exists(TJM_AUTOLOAD)){
 	echo "Initializing dependencies…\n";
-	chdir(__DIR__);
-	passthru('composer install');
+	passthru('composer install -d ' . TJM_TBIN_DIR);
 }
-$loader = require_once($loader);
-$app = new Application(__DIR__ . '/config/console.yml');
-$app->run();
+require_once(TJM_AUTOLOAD);
+(new Application(TJM_TBIN_DIR . '/config/console.yml'))->run();
