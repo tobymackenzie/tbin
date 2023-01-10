@@ -20,6 +20,7 @@ class LogsCommand extends Command{
 			->setDescription('Read log files.')
 			->addArgument('name', InputArgument::REQUIRED, 'Look for log files with name.')
 			->addOption('contents', 'c', InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'Find in log contents.')
+			->addOption('filter', 'f', InputOption::VALUE_REQUIRED, 'Filter log lines by pattern.  Only works for `less` command.')
 			->addOption('host', 'h', InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'SSH style host string of host to read log(s) on.', ['localhost'])
 			->addOption('path', 'p', InputOption::VALUE_REQUIRED, 'Directory to find log in.', '/var/log')
 			->addOption('run', 'r', InputOption::VALUE_REQUIRED, 'Command to run on found log.', 'less')
@@ -52,6 +53,9 @@ class LogsCommand extends Command{
 			foreach($contents as $content){
 				$opts['command'] .= " | xargs -0 grep -l --null " . escapeshellarg($content);
 			}
+		}
+		if($input->getOption('filter')){
+			$runOpts[] = "-++" . escapeshellarg('&' . $input->getOption('filter') . "\n");
 		}
 		$opts['command'] .= " | sort -z | xargs -0 {$run} " . implode(' ', $runOpts);
 		$opts['interactive'] = true;
