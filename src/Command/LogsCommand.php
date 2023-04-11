@@ -59,6 +59,7 @@ class LogsCommand extends Command{
 		}
 		$opts['command'] .= " | sort -z | xargs -0 {$run} " . implode(' ', $runOpts);
 		$opts['interactive'] = true;
+		$opts['sudo'] = true;
 		foreach($input->getOption('host') as $host){
 			if($output->isVerbose()){
 				$output->writeln('Running: ' . $opts['command'] . ' for host ' . $host);
