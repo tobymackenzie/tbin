@@ -56,7 +56,11 @@ class LogsCommand extends Command{
 		}
 		if($input->getOption('filter')){
 			$runOpts[] = "-++" . escapeshellarg('&' . $input->getOption('filter') . "\n");
+		}elseif($run === 'less'){
+			//--start at end of file if we aren't looking for pattern
+			$runOpts[] = '++G';
 		}
+
 		$opts['command'] .= " | sort -z | xargs -0 {$run} " . implode(' ', $runOpts);
 		$opts['interactive'] = true;
 		$opts['sudo'] = true;
