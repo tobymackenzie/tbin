@@ -18,13 +18,13 @@ class FindFilesCommand extends Command{
 	protected function configure(){
 		$this
 			->setDescription('Find files via the `find` command.  Optionally use `grep` command to find content.  Optionally do stuff with those files using run option.')
-			->addArgument('name', InputArgument::OPTIONAL, 'Look for files with name.')
+			->addArgument('path', InputArgument::OPTIONAL, 'Directory to search at.')
 			->addOption('contents', 'c', InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'Search file contents for string.  Multiple for separate strings (AND).')
 			->addOption('exclude-paths', 'e', InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'Path(s) to exclude from search.')
 			->addOption('find-options', 'o', InputOption::VALUE_REQUIRED, 'Options for the find command.')
 			->addOption('host', 'h', InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'SSH style host string of host(s) to run command on.', ['localhost'])
 			->addOption('forward-agent', 'f', InputOption::VALUE_NONE, 'Forward local credentials for connecting to other servers from remote.')
-			->addOption('path', 'p', InputOption::VALUE_REQUIRED, 'Directory to search at.')
+			->addOption('name', 'n', InputOption::VALUE_REQUIRED, 'Look for files with name.')
 			->addOption('run', 'r', InputOption::VALUE_REQUIRED, 'Command to run on found files.')
 		;
 	}
@@ -41,7 +41,7 @@ class FindFilesCommand extends Command{
 				$opts['command'] .= " -not -path " . escapeshellarg($path);
 			}
 		}
-		$name = $input->getArgument('name');
+		$name = $input->getOption('name');
 		if($name){
 			$opts['command'] .= " -name " . escapeshellarg($name);
 		}
@@ -79,7 +79,7 @@ class FindFilesCommand extends Command{
 			}
 			$location = new Location([
 				'host'=> $host,
-				'path'=> $input->getOption('path'),
+				'path'=> $input->getArgument('path') ?: '.',
 				'protocol'=> $host === 'localhost' ? 'file' : 'ssh',
 			]);
 			$result = $this->shell->run($opts, $location);
