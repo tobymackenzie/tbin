@@ -8,6 +8,6 @@
 		"php": ">=5.4.0"
 		,"symfony/yaml": "^5.4||^6.4"
 		,"tjm/shell-runner": "@dev"
-		,"tjm/sy-console": "^3.0"
+		,"tjm/sy-console": "^2||^3.0"
 	}
 }
