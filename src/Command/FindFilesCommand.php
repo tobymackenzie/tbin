@@ -88,5 +88,6 @@ class FindFilesCommand extends Command{
 			}
 
 		}
+		return 0;
 	}
 }

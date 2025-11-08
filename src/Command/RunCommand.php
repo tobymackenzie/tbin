@@ -42,5 +42,6 @@ class RunCommand extends Command{
 			}
 			$this->shell->run($opts, $location);
 		}
+		return 0;
 	}
 }

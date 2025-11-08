@@ -32,5 +32,6 @@ class SelfUpdateCommand extends Command{
 				passthru("{$composer} update");
 			}
 		}
+		return 0;
 	}
 }

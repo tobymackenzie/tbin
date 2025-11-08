@@ -51,5 +51,6 @@ class ShellCommand extends Command{
 				$app->run($argInput, $output);
 			}
 		}
+		return 0;
 	}
 }

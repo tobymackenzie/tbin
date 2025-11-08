@@ -35,5 +35,6 @@ class ReplacePDFContentCommand extends Command{
 				,'rm __tmp12345.pdf __tmp22345.pdf'
 			]
 		]);
+		return 0;
 	}
 }

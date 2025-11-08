@@ -78,5 +78,6 @@ class LogsCommand extends Command{
 				$output->writeln($result);
 			}
 		}
+		return 0;
 	}
 }

@@ -39,5 +39,6 @@ class StatusCommand extends Command{
 				$output->writeln($this->shell->run('w -i', $host));
 			}
 		}
+		return 0;
 	}
 }
