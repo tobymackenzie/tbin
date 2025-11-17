@@ -17,7 +17,7 @@ class StatusCommand extends Command{
 	protected function configure(){
 		$this
 			->setDescription('Get status of a machine or site.')
-			->addArgument('host', InputArgument::IS_ARRAY | InputArgument::OPTIONAL, 'SSH style host string of host(s) to run command on.', ['localhost'])
+			->addArgument('host', InputArgument::IS_ARRAY | InputArgument::OPTIONAL, 'SSH style host string of host(s) to run command on.', ['tmcom'])
 		;
 	}
 	protected function execute(InputInterface $input, OutputInterface $output){
